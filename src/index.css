@@ -1,0 +1,82 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap');
+
+@theme {
+  /* Elegant Nature Theme - Applied to existing dark mode classes */
+
+  /* Backgrounds & Panels */
+  --color-slate-900: #FFFFFF;
+  /* Main background */
+  --color-slate-800: #F7F2EB;
+  /* Panels / Navbar */
+  --color-slate-700: #A8A492;
+  /* Borders / Hovers */
+
+  /* Intermediates */
+  --color-slate-600: #d5ccbe;
+  --color-slate-500: #a3a89e;
+
+  /* Text Colors (Must be dark for readability) */
+  --color-slate-400: #666666;
+  /* Muted text */
+  --color-slate-300: #333333;
+  /* Standard text */
+  --color-slate-200: #111111;
+  --color-slate-100: #000000;
+  /* Headings */
+  --color-slate-50: #000000;
+
+  /* Re-mapping core colors used for text and accents */
+  --color-white: #000000;
+  /* Flipped white to dark for `text-white` usage */
+  --color-black: #000000;
+  /* Keep black for shadow opacities */
+
+  /* Map primary accents to #8B9A6E */
+  --color-blue-100: #e8ece1;
+  --color-blue-300: #a9b597;
+  --color-blue-400: #8B9A6E;
+  /* Logo and highlights */
+  --color-blue-500: #76855b;
+  /* Main buttons and borders */
+  --color-blue-600: #62704a;
+  --color-blue-900: #323b24;
+
+  /* Indigo for gradients mapped to sage variations */
+  --color-indigo-400: #8B9A6E;
+  --color-indigo-500: #76855b;
+
+  /* Emerald mapped to sage as well */
+  --color-emerald-300: #a9b597;
+  --color-emerald-400: #8B9A6E;
+  --color-emerald-500: #76855b;
+  --color-emerald-600: #62704a;
+
+  /* Rose for Errors */
+  --color-rose-300: #d67a7a;
+  --color-rose-400: #cc6666;
+  --color-rose-500: #b84d4d;
+  --color-rose-600: #a33939;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-slate-100 antialiased selection:bg-[#8B9A6E]/30;
+    font-family: 'Inter', 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', system-ui, sans-serif;
+    line-height: 1.8;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-slate-800/90 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-md shadow-slate-700/50;
+  }
+
+  .btn-primary {
+    @apply bg-[#8B9A6E] hover:bg-[#76855b] text-[#FFFFFF] font-bold py-2.5 px-5 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-[#8B9A6E]/30;
+  }
+
+  .card-hover {
+    @apply transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-slate-700/50 hover:border-[#8B9A6E]/40 cursor-pointer;
+  }
+}
