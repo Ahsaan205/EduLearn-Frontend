@@ -370,23 +370,23 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto flex flex-col gap-6">
-      <div className="flex items-center justify-between mb-2">
+    <div className="max-w-7xl mx-auto flex flex-col gap-2">
+      <div className="flex items-center justify-between mb-0">
         <h1 className="text-lg font-bold text-emerald-400">Admin Dashboard</h1>
       </div>
 
-      <div className="flex gap-4 border-b border-slate-800 pb-px">
+      <div className="flex gap-2 border-b border-slate-800 pb-px">
         <button
-          className={`flex items-center gap-2 px-4 py-2 font-semibold text-sm rounded-t-lg transition-colors ${activeTab === 'curriculum' ? 'bg-slate-800 text-emerald-400 border-b-2 border-emerald-400' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}`}
+          className={`flex items-center gap-1.5 px-3 py-1 font-semibold text-xs rounded-t-md transition-colors ${activeTab === 'curriculum' ? 'bg-slate-800 text-emerald-400 border-b-2 border-emerald-400' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}`}
           onClick={() => setActiveTab('curriculum')}
         >
-          <BookOpen size={18} /> Curriculum Management
+          <BookOpen size={14} /> Curriculum Management
         </button>
         <button
-          className={`flex items-center gap-2 px-4 py-2 font-semibold text-sm rounded-t-lg transition-colors ${activeTab === 'students' ? 'bg-slate-800 text-emerald-400 border-b-2 border-emerald-400' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}`}
+          className={`flex items-center gap-1.5 px-3 py-1 font-semibold text-xs rounded-t-md transition-colors ${activeTab === 'students' ? 'bg-slate-800 text-emerald-400 border-b-2 border-emerald-400' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}`}
           onClick={() => setActiveTab('students')}
         >
-          <Users size={18} /> Enrolled Students
+          <Users size={14} /> Enrolled Students
         </button>
       </div>
 
@@ -394,7 +394,7 @@ export default function AdminDashboard() {
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div>
             {/* Breadcrumb Path */}
-            <div className="text-sm text-slate-400 font-medium flex flex-wrap items-center gap-2 bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+            <div className="text-xs text-slate-400 font-medium flex flex-wrap items-center gap-1 bg-slate-900/50 p-2 rounded-md border border-slate-700/50">
               <span className="text-slate-500">Path:</span>
               {selectedBoard ? (
                 <span className="text-slate-200">{boards.find(b => b._id === selectedBoard)?.name}</span>
@@ -423,24 +423,24 @@ export default function AdminDashboard() {
           </div>
 
           {/* Target Selector */}
-          <div className="glass-panel p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="glass-panel p-3 grid grid-cols-1 md:grid-cols-3 gap-2">
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Board</label>
-              <select className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all" value={selectedBoard} onChange={handleBoardChange}>
+              <label className="block text-[11px] text-slate-400 mb-0.5">Board</label>
+              <select className="w-full bg-slate-900 border border-slate-700 rounded p-1 text-sm text-white focus:border-emerald-500 outline-none transition-all" value={selectedBoard} onChange={handleBoardChange}>
                 <option value="">Select Board</option>
                 {boards.map(b => <option key={b._id} value={b._id}>{b.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Class</label>
-              <select className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all" value={selectedClass} onChange={handleClassChange} disabled={!selectedBoard}>
+              <label className="block text-[11px] text-slate-400 mb-0.5">Class</label>
+              <select className="w-full bg-slate-900 border border-slate-700 rounded p-1 text-sm text-white focus:border-emerald-500 outline-none transition-all" value={selectedClass} onChange={handleClassChange} disabled={!selectedBoard}>
                 <option value="">Select Class</option>
                 {classes.map(c => <option key={c._id} value={c._id}>{c.gradeLevel}th</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Subject</label>
-              <select className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all" value={selectedSubject} onChange={handleSubjectChange} disabled={!selectedClass}>
+              <label className="block text-[11px] text-slate-400 mb-0.5">Subject</label>
+              <select className="w-full bg-slate-900 border border-slate-700 rounded p-1 text-sm text-white focus:border-emerald-500 outline-none transition-all" value={selectedSubject} onChange={handleSubjectChange} disabled={!selectedClass}>
                 <option value="">Select Subject</option>
                 {subjects.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
               </select>
@@ -452,15 +452,15 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
               {/* Chapter Pane */}
-              <div className="glass-panel p-6 flex flex-col gap-6 shadow-lg">
-                <h2 className="text-lg font-semibold border-b border-slate-800 pb-2 flex items-center gap-2">
-                  <BookOpen className="text-emerald-400" size={20} /> Chapters
+              <div className="glass-panel p-3 flex flex-col gap-2 shadow-lg">
+                <h2 className="text-base font-semibold border-b border-slate-800 pb-1 flex items-center gap-1.5">
+                  <BookOpen className="text-emerald-400" size={16} /> Chapters
                 </h2>
 
-                <form onSubmit={handleAddChapter} className="flex gap-2">
-                  <input type="number" required placeholder="No." className="w-20 bg-slate-900 border border-slate-700 rounded-lg p-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all" value={newChapter.chapterNumber} onChange={e => setNewChapter({ ...newChapter, chapterNumber: e.target.value })} />
-                  <input type="text" required placeholder="Chapter Title" className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all" value={newChapter.title} onChange={e => setNewChapter({ ...newChapter, title: e.target.value })} />
-                  <button type="submit" className="bg-emerald-600 hover:bg-emerald-500 px-4 rounded-lg font-medium text-white transition-colors">Add</button>
+                <form onSubmit={handleAddChapter} className="flex gap-1.5">
+                  <input type="number" required placeholder="No." className="w-12 bg-slate-900 border border-slate-700 rounded p-1 text-xs focus:border-sky-500 outline-none transition-all" value={newChapter.chapterNumber} onChange={e => setNewChapter({ ...newChapter, chapterNumber: e.target.value })} />
+                  <input type="text" required placeholder="Chapter Title" className="flex-1 bg-slate-900 border border-slate-700 rounded p-1 text-xs focus:border-sky-500 outline-none transition-all" value={newChapter.title} onChange={e => setNewChapter({ ...newChapter, title: e.target.value })} />
+                  <button type="submit" className="bg-sky-600 hover:bg-sky-500 px-3 py-1 rounded text-xs font-bold text-white shadow-md transition-colors">Add</button>
                 </form>
 
                 <div className="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
@@ -493,65 +493,65 @@ export default function AdminDashboard() {
 
               {/* Questions Pane */}
               {selectedChapter ? (
-                <div className="glass-panel p-6 flex flex-col gap-6 shadow-lg border-t-4 border-t-emerald-500/50">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                    <h2 className="text-lg font-semibold">Questions</h2>
-                    <div className="flex items-center gap-2">
-                      <div className="flex bg-slate-900 rounded-lg p-1 border border-slate-800">
+                <div className="glass-panel p-3 flex flex-col gap-2 shadow-lg border-t-4 border-t-sky-500">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-1">
+                    <h2 className="text-base font-semibold">Questions</h2>
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex bg-slate-900 rounded p-0.5 border border-slate-800">
                         {['All', 'MCQ', 'Short', 'Long'].map(type => (
                           <button
                             key={type}
                             onClick={() => setQuestionFilter(type)}
-                            className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${questionFilter === type ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all shadow-sm ${questionFilter === type ? 'bg-sky-600 text-white scale-105' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
                           >
                             {type}
                           </button>
                         ))}
                       </div>
                       {questions.length > 0 && (
-                        <button onClick={handleClearQuestions} className="text-xs flex items-center gap-1 text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 px-2 py-1.5 rounded transition-colors ml-2">
+                        <button onClick={handleClearQuestions} className="text-xs flex items-center gap-1 text-white hover:text-white bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-md shadow-md font-bold transition-colors ml-2">
                           <Trash2 size={14} /> Clear All
                         </button>
                       )}
                     </div>
                   </div>
 
-                  <form onSubmit={handleAddQuestion} className="flex flex-col gap-4 bg-slate-900/50 p-5 rounded-xl border border-slate-800">
-                    <div className="flex gap-4">
-                      <select className="bg-slate-900 border border-slate-700 rounded-lg p-2 focus:border-emerald-500 outline-none" value={newQuestion.type} onChange={e => setNewQuestion({ ...newQuestion, type: e.target.value })}>
+                  <form onSubmit={handleAddQuestion} className="flex flex-col gap-2 bg-slate-900/50 p-3 rounded-lg border border-slate-800">
+                    <div className="flex gap-2">
+                      <select className="bg-slate-900 border border-slate-700 rounded p-1 text-sm focus:border-emerald-500 outline-none" value={newQuestion.type} onChange={e => setNewQuestion({ ...newQuestion, type: e.target.value })}>
                         <option value="MCQ">MCQ</option>
                         <option value="Short">Short</option>
                         <option value="Long">Long</option>
                       </select>
-                      <input type="text" required placeholder="Enter question text..." className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 focus:border-emerald-500 outline-none" value={newQuestion.questionText} onChange={e => setNewQuestion({ ...newQuestion, questionText: e.target.value })} />
+                      <input type="text" required placeholder="Enter question text..." className="flex-1 bg-slate-900 border border-slate-700 rounded p-1 text-sm focus:border-emerald-500 outline-none" value={newQuestion.questionText} onChange={e => setNewQuestion({ ...newQuestion, questionText: e.target.value })} />
                     </div>
 
                     {newQuestion.type === 'MCQ' && (
-                      <div className="flex flex-col gap-3 pl-4 border-l-2 border-slate-700 mt-2">
-                        <label className="text-sm text-slate-400 font-medium">Options (Select radio for Correct Answer)</label>
+                      <div className="flex flex-col gap-1.5 pl-3 border-l-2 border-slate-700 mt-1">
+                        <label className="text-[11px] text-slate-400 font-medium">Options (Select radio for Correct Answer)</label>
                         {newQuestion.options.map((opt, idx) => (
-                          <div key={idx} className="flex items-center gap-3">
-                            <input type="radio" name="correctAnswer" required className="accent-emerald-500 w-4 h-4 cursor-pointer" checked={newQuestion.correctAnswerIndex === idx} onChange={() => setNewQuestion({ ...newQuestion, correctAnswerIndex: idx })} />
-                            <input type="text" placeholder={`Option ${idx + 1}`} className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm focus:border-emerald-500 outline-none" value={opt} onChange={e => handleOptionChange(idx, e.target.value)} />
+                          <div key={idx} className="flex items-center gap-2">
+                            <input type="radio" name="correctAnswer" required className="accent-emerald-500 w-3 h-3 cursor-pointer" checked={newQuestion.correctAnswerIndex === idx} onChange={() => setNewQuestion({ ...newQuestion, correctAnswerIndex: idx })} />
+                            <input type="text" placeholder={`Option ${idx + 1}`} className="flex-1 bg-slate-900 border border-slate-700 rounded p-1 text-xs focus:border-emerald-500 outline-none" value={opt} onChange={e => handleOptionChange(idx, e.target.value)} />
                           </div>
                         ))}
                       </div>
                     )}
                     {newQuestion.type !== 'MCQ' && (
-                      <textarea required placeholder="Enter answer text..." rows="3" className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 focus:border-emerald-500 outline-none mt-2 text-white" value={newQuestion.answerText} onChange={e => setNewQuestion({ ...newQuestion, answerText: e.target.value })}></textarea>
+                      <textarea required placeholder="Enter answer text..." rows="2" className="w-full bg-slate-900 border border-slate-700 rounded p-1 text-sm focus:border-emerald-500 outline-none mt-1 text-white" value={newQuestion.answerText} onChange={e => setNewQuestion({ ...newQuestion, answerText: e.target.value })}></textarea>
                     )}
 
-                    <div className="flex gap-2 mt-2">
-                      <button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2.5 rounded-lg font-bold text-white transition-colors">
+                    <div className="flex gap-2 mt-1">
+                      <button type="submit" className="flex-1 bg-sky-600 hover:bg-sky-500 py-1.5 rounded text-sm font-bold text-white shadow-md transition-colors">
                         Add Question
                       </button>
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 py-2.5 px-4 rounded-lg font-bold text-white transition-colors"
+                        className="flex items-center justify-center gap-1.5 bg-slate-700 hover:bg-slate-600 border border-slate-500 py-1.5 px-3 rounded text-sm font-bold text-white shadow-md transition-colors"
                         title="Upload JSON file with questions"
                       >
-                        <Upload size={18} /> Bulk Upload
+                        <Upload size={14} /> Bulk Upload
                       </button>
                       <input
                         type="file"

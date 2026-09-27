@@ -4,6 +4,8 @@ import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
 import Breadcrumbs from '../components/Breadcrumbs';
+import Latex from 'react-latex-next';
+import 'katex/dist/katex.min.css';
 
 export default function ChapterTextQuestions({ type }) {
   const { chapterId } = useParams();
@@ -11,6 +13,22 @@ export default function ChapterTextQuestions({ type }) {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+
+  const formatText = (text) => {
+    if (typeof text !== 'string') return text;
+    
+    // Remove the "- " before bold text
+    const cleanedText = text.replace(/-\s*\*\*/g, '**');
+    
+    // Split by **bold** syntax
+    const parts = cleanedText.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="font-bold text-slate-100">{part.slice(2, -2)}</strong>;
+      }
+      return <Latex key={i}>{part}</Latex>;
+    });
+  };
 
   useEffect(() => {
     api.get(`/public/chapters/${chapterId}/questions`)
@@ -63,12 +81,12 @@ export default function ChapterTextQuestions({ type }) {
                         <img src={q.imageUrl} alt="Question Diagram" className="max-h-48 rounded-lg object-contain border border-slate-700 bg-slate-900/50" />
                       </div>
                     )}
-                    <h3 className={`text-base font-medium font-medium leading-relaxed transition-colors ${isExpanded ? 'text-blue-100' : 'text-white'}`}>
-                      <span className="text-blue-400 font-bold mr-2">Q{i + 1}.</span> 
-                      {q.questionText}
+                    <h3 className={`text-base font-medium leading-relaxed transition-colors ${isExpanded ? 'text-sky-700 font-bold' : 'text-slate-100'}`}>
+                      <span className="text-sky-600 font-bold mr-2">Q{i + 1}.</span> 
+                      {formatText(q.questionText)}
                     </h3>
                   </div>
-                  <div className={`text-slate-400 mt-1 flex-shrink-0 transition-transform duration-300 ${isExpanded ? 'rotate-180 text-blue-400' : ''}`}>
+                  <div className={`text-slate-400 mt-1 flex-shrink-0 transition-transform duration-300 ${isExpanded ? 'rotate-180 text-sky-600' : ''}`}>
                     <ChevronDown size={24} />
                   </div>
                 </div>
@@ -90,7 +108,7 @@ export default function ChapterTextQuestions({ type }) {
                                 <img src={q.answerImageUrl} alt="Answer Diagram" className="max-h-48 rounded-lg object-contain border border-slate-700 bg-slate-900/50" />
                               </div>
                             )}
-                            {q.correctAnswer ? q.correctAnswer : <span className="italic text-slate-500">No answer provided.</span>}
+                            {q.correctAnswer ? formatText(q.correctAnswer) : <span className="italic text-slate-500">No answer provided.</span>}
                           </div>
                         </div>
                       </div>

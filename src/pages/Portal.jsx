@@ -10,7 +10,7 @@ export default function Portal() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
-  
+
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('Not Selected');
@@ -20,16 +20,16 @@ export default function Portal() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { user, login } = useAuth();
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const endpoint = isLogin ? '/auth/login' : '/auth/register';
       const payload = isLogin ? { email, password } : { name, email, password, age, gender, phone, address };
       const res = await api.post(endpoint, payload);
-      
+
       login(res.data.user, res.data.token);
-      
+
       if (res.data.user.role === 'admin') {
         navigate('/admin');
       } else {
@@ -46,7 +46,7 @@ export default function Portal() {
   };
 
   if (user && user.role === 'student') {
-    return <Navigate to="/my-activity" replace />;
+    return <Navigate to="/" replace />;
   } else if (user && user.role === 'admin') {
     return (
       <div className="max-w-2xl mx-auto text-center py-20">
@@ -71,7 +71,7 @@ export default function Portal() {
             {isLogin ? "Login to access your account" : "Join our platform"}
           </p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           {!isLogin ? (
             <div className="flex flex-col gap-3">
