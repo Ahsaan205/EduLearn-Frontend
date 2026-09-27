@@ -14,7 +14,7 @@ export default function ChapterQuiz() {
   const [loading, setLoading] = useState(true);
   
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState({}); // { questionIndex: 'selected option' }
+  const [userAnswers, setUserAnswers] = useState({});
   const [showResult, setShowResult] = useState(false);
   const [showAnswers, setShowAnswers] = useState(false);
   const [score, setScore] = useState(0);
