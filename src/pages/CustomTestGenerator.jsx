@@ -36,6 +36,11 @@ export default function CustomTestGenerator() {
   const [generatedTest, setGeneratedTest] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  useEffect(() => {
+    const total = (counts.MCQ * marks.MCQ) + (counts.Short * marks.Short) + (counts.Long * marks.Long);
+    setTestMetadata(prev => ({ ...prev, totalMarks: total.toString() }));
+  }, [counts, marks]);
+
   // Fetch Boards on Mount
   useEffect(() => {
     api.get('/public/boards')
@@ -156,44 +161,44 @@ export default function CustomTestGenerator() {
   if (loading) return <div className="text-center py-20 animate-pulse">Loading Test Generator...</div>;
 
   return (
-    <div className="max-w-5xl mx-auto flex flex-col gap-6 print:m-0 print:p-0 print:max-w-none print:w-full">
+    <div className="max-w-5xl mx-auto flex flex-col gap-4 print:m-0 print:p-0 print:max-w-none print:w-full">
 
       {/* Configuration Section */}
       {!generatedTest && (
-        <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="text-center mb-2">
-            <h1 className="text-3xl font-bold text-black bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center gap-2">
-              <Settings className="w-8 h-8 text-emerald-400" /> Global Test Generator
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="text-center mb-0">
+            <h1 className="text-2xl font-bold text-black bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center gap-2">
+              <Settings className="w-6 h-6 text-emerald-400" /> Global Test Generator
             </h1>
-            <p className="text-slate-400 mt-2">Select your curriculum and build custom exam papers instantly.</p>
+            <p className="text-slate-400 mt-1 text-sm">Select your curriculum and build custom exam papers instantly.</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
             {/* Left Column: Selection */}
-            <div className="flex flex-col gap-6">
-              <div className="glass-panel p-6 shadow-xl border border-slate-700/50">
-                <h2 className="text-lg font-bold flex items-center gap-2 text-slate-200 mb-4 border-b border-slate-700/50 pb-3">
-                  <BookOpen className="text-emerald-400" size={20} /> Select Curriculum
+            <div className="flex flex-col gap-4">
+              <div className="glass-panel p-4 shadow-lg border border-slate-700/50">
+                <h2 className="text-base font-bold flex items-center gap-1.5 text-slate-200 mb-3 border-b border-slate-700/50 pb-2">
+                  <BookOpen className="text-emerald-400" size={18} /> Select Curriculum
                 </h2>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1">Board</label>
-                    <select className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:border-emerald-500 outline-none transition-all" value={selectedBoard} onChange={e => setSelectedBoard(e.target.value)}>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-0.5">Board</label>
+                    <select className="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm text-white focus:border-emerald-500 outline-none transition-all" value={selectedBoard} onChange={e => setSelectedBoard(e.target.value)}>
                       <option value="">Select Board</option>
                       {boards.map(b => <option key={b._id} value={b._id}>{b.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1">Class</label>
-                    <select className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:border-emerald-500 outline-none transition-all" value={selectedClass} onChange={e => setSelectedClass(e.target.value)} disabled={!selectedBoard}>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-0.5">Class</label>
+                    <select className="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm text-white focus:border-emerald-500 outline-none transition-all" value={selectedClass} onChange={e => setSelectedClass(e.target.value)} disabled={!selectedBoard}>
                       <option value="">Select Class</option>
                       {classes.map(c => <option key={c._id} value={c._id}>{c.gradeLevel}th</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1">Subject</label>
-                    <select className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:border-emerald-500 outline-none transition-all" value={selectedSubject} onChange={e => setSelectedSubject(e.target.value)} disabled={!selectedClass}>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-0.5">Subject</label>
+                    <select className="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm text-white focus:border-emerald-500 outline-none transition-all" value={selectedSubject} onChange={e => setSelectedSubject(e.target.value)} disabled={!selectedClass}>
                       <option value="">Select Subject</option>
                       {subjects.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
                     </select>
@@ -202,91 +207,90 @@ export default function CustomTestGenerator() {
               </div>
 
               {selectedSubject && (
-                <div className="glass-panel p-6 shadow-xl border border-slate-700/50">
-                  <div className="flex justify-between items-center mb-4 border-b border-slate-700/50 pb-3">
-                    <h2 className="text-lg font-bold flex items-center gap-2 text-slate-200">
-                      <BookOpen className="text-emerald-400" size={20} /> Select Chapters
+                <div className="glass-panel p-4 shadow-lg border border-slate-700/50">
+                  <div className="flex justify-between items-center mb-3 border-b border-slate-700/50 pb-2">
+                    <h2 className="text-base font-bold flex items-center gap-1.5 text-slate-200">
+                      <BookOpen className="text-emerald-400" size={18} /> Select Chapters
                     </h2>
-                    <button onClick={handleSelectAll} className="text-sm text-emerald-400 hover:text-emerald-300 font-medium">
+                    <button onClick={handleSelectAll} className="text-[11px] text-black hover:font-bold font-medium bg-emerald-500/10 px-2 py-0.5 rounded">
                       {selectedChapters.length === chapters.length ? 'Deselect All' : 'Select All'}
                     </button>
                   </div>
-                  <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+                  <div className="flex flex-col gap-1.5 max-h-[250px] overflow-y-auto custom-scrollbar pr-2">
                     {chapters.map(ch => (
-                      <label key={ch._id} className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-transparent hover:border-slate-600 cursor-pointer transition-all">
+                      <label key={ch._id} className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/50 hover:bg-slate-800 border border-transparent hover:border-slate-600 cursor-pointer transition-all">
                         <input
                           type="checkbox"
-                          className="w-5 h-5 accent-emerald-500"
+                          className="w-4 h-4 accent-emerald-500"
                           checked={selectedChapters.includes(ch._id)}
                           onChange={() => handleChapterToggle(ch._id)}
                         />
-                        <span className="font-semibold text-emerald-400 w-8">Ch {ch.chapterNumber}</span>
-                        <span className="text-slate-300 flex-1 truncate">{ch.title}</span>
+                        <span className="font-semibold text-emerald-400 w-8 text-sm">Ch {ch.chapterNumber}</span>
+                        <span className="text-slate-300 flex-1 truncate text-sm">{ch.title}</span>
                       </label>
                     ))}
-                    {chapters.length === 0 && <p className="text-slate-500 py-4 text-center">No chapters found for this subject.</p>}
+                    {chapters.length === 0 && <p className="text-slate-500 py-2 text-center text-sm">No chapters found.</p>}
                   </div>
                 </div>
               )}
             </div>
 
             {/* Right Column: Config */}
-            <div className="flex flex-col gap-6">
-              <div className="glass-panel p-6 shadow-xl border border-slate-700/50">
-                <h2 className="text-lg font-bold flex items-center gap-2 mb-6 border-b border-slate-700/50 pb-3 text-slate-200">
-                  <Layers className="text-blue-400" size={20} /> Questions & Marks
+            <div className="flex flex-col gap-4">
+              <div className="glass-panel p-4 shadow-lg border border-slate-700/50">
+                <h2 className="text-base font-bold flex items-center gap-1.5 mb-3 border-b border-slate-700/50 pb-2 text-slate-200">
+                  <Layers className="text-blue-400" size={18} /> Questions & Marks
                 </h2>
 
-                <div className="flex flex-col gap-4 mb-4">
-                  <div className="grid grid-cols-3 gap-2 mb-1">
-                    <span className="font-semibold text-slate-400 text-sm">Type</span>
-                    <span className="font-semibold text-slate-400 text-sm text-center">Count</span>
-                    <span className="font-semibold text-slate-400 text-sm text-center">Marks (Each)</span>
+                <div className="flex flex-col gap-2 mb-2">
+                  <div className="grid grid-cols-3 gap-2 mb-0.5">
+                    <span className="font-semibold text-slate-400 text-[11px]">Type</span>
+                    <span className="font-semibold text-slate-400 text-[11px] text-center">Count</span>
+                    <span className="font-semibold text-slate-400 text-[11px] text-center">Marks (Each)</span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 items-center p-3 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                  <div className="grid grid-cols-3 gap-2 items-center p-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
                     <span className="font-semibold text-slate-300 text-sm">MCQs</span>
-                    <input type="number" min="0" value={counts.MCQ} onChange={(e) => handleCountChange('MCQ', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-center text-white focus:border-blue-500 outline-none" />
-                    <input type="number" min="0" step="0.5" value={marks.MCQ} onChange={(e) => handleMarksChange('MCQ', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-center text-white focus:border-blue-500 outline-none" />
+                    <input type="number" min="0" value={counts.MCQ} onChange={(e) => handleCountChange('MCQ', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
+                    <input type="number" min="0" step="0.5" value={marks.MCQ} onChange={(e) => handleMarksChange('MCQ', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
                   </div>
-                  <div className="grid grid-cols-3 gap-2 items-center p-3 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                  <div className="grid grid-cols-3 gap-2 items-center p-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
                     <span className="font-semibold text-slate-300 text-sm">Short Qs</span>
-                    <input type="number" min="0" value={counts.Short} onChange={(e) => handleCountChange('Short', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-center text-white focus:border-blue-500 outline-none" />
-                    <input type="number" min="0" step="0.5" value={marks.Short} onChange={(e) => handleMarksChange('Short', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-center text-white focus:border-blue-500 outline-none" />
+                    <input type="number" min="0" value={counts.Short} onChange={(e) => handleCountChange('Short', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
+                    <input type="number" min="0" step="0.5" value={marks.Short} onChange={(e) => handleMarksChange('Short', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
                   </div>
-                  <div className="grid grid-cols-3 gap-2 items-center p-3 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                  <div className="grid grid-cols-3 gap-2 items-center p-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
                     <span className="font-semibold text-slate-300 text-sm">Long Qs</span>
-                    <input type="number" min="0" value={counts.Long} onChange={(e) => handleCountChange('Long', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-center text-white focus:border-blue-500 outline-none" />
-                    <input type="number" min="0" step="0.5" value={marks.Long} onChange={(e) => handleMarksChange('Long', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-center text-white focus:border-blue-500 outline-none" />
+                    <input type="number" min="0" value={counts.Long} onChange={(e) => handleCountChange('Long', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
+                    <input type="number" min="0" step="0.5" value={marks.Long} onChange={(e) => handleMarksChange('Long', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
                   </div>
                 </div>
               </div>
 
-              <div className="glass-panel p-6 shadow-xl border border-slate-700/50">
-                <h2 className="text-lg font-bold flex items-center gap-2 mb-6 border-b border-slate-700/50 pb-3 text-slate-200">
-                  <PenTool className="text-purple-400" size={20} /> Paper Details
+              <div className="glass-panel p-4 shadow-lg border border-slate-700/50">
+                <h2 className="text-base font-bold flex items-center gap-1.5 mb-3 border-b border-slate-700/50 pb-2 text-slate-200">
+                  <PenTool className="text-purple-400" size={18} /> Paper Details
                 </h2>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1">Test Title</label>
-                    <input type="text" value={testMetadata.title} onChange={e => setTestMetadata({ ...testMetadata, title: e.target.value })} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:border-purple-500 outline-none" placeholder="e.g. Midterm Examination" />
+                    <label className="block text-[11px] font-medium text-slate-400 mb-0.5">Test Title</label>
+                    <input type="text" value={testMetadata.title} onChange={e => setTestMetadata({ ...testMetadata, title: e.target.value })} className="w-full bg-slate-900 border border-slate-600 rounded p-1.5 text-sm text-white focus:border-purple-500 outline-none" placeholder="e.g. Midterm Examination" />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="flex items-center gap-1 text-sm text-slate-400 mb-1"><Clock size={14} /> Time Allowed</label>
-                      <input type="text" value={testMetadata.timeAllowed} onChange={e => setTestMetadata({ ...testMetadata, timeAllowed: e.target.value })} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:border-purple-500 outline-none" placeholder="e.g. 2 Hours" />
+                      <label className="flex items-center gap-1 text-[11px] font-medium text-slate-400 mb-0.5"><Clock size={12} /> Time Allowed</label>
+                      <input type="text" value={testMetadata.timeAllowed} onChange={e => setTestMetadata({ ...testMetadata, timeAllowed: e.target.value })} className="w-full bg-slate-900 border border-slate-600 rounded p-1.5 text-sm text-white focus:border-purple-500 outline-none" placeholder="e.g. 2 Hours" />
                     </div>
                     <div>
-                      <label className="flex items-center gap-1 text-sm text-slate-400 mb-1"><Calendar size={14} /> Date</label>
-                      <input type="date" value={testMetadata.date} onChange={e => setTestMetadata({ ...testMetadata, date: e.target.value })} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:border-purple-500 outline-none" />
+                      <label className="flex items-center gap-1 text-[11px] font-medium text-slate-400 mb-0.5"><Calendar size={12} /> Date</label>
+                      <input type="date" value={testMetadata.date} onChange={e => setTestMetadata({ ...testMetadata, date: e.target.value })} className="w-full bg-slate-900 border border-slate-600 rounded p-1.5 text-sm text-white focus:border-purple-500 outline-none" />
                     </div>
                   </div>
                   <div>
-                    <label className="flex justify-between items-center text-sm text-slate-400 mb-1">
-                      <span>Total Marks</span>
-                      <button type="button" onClick={() => setTestMetadata({ ...testMetadata, totalMarks: calculateAutoTotal() })} className="text-xs text-purple-400 hover:text-purple-300">Calculate Auto</button>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-0.5">
+                      Total Marks
                     </label>
-                    <input type="text" value={testMetadata.totalMarks} onChange={e => setTestMetadata({ ...testMetadata, totalMarks: e.target.value })} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:border-purple-500 outline-none" placeholder={`Auto: ${calculateAutoTotal()}`} />
+                    <input type="text" value={testMetadata.totalMarks} onChange={e => setTestMetadata({ ...testMetadata, totalMarks: e.target.value })} className="w-full bg-slate-900 border border-slate-600 rounded p-1.5 text-sm text-white focus:border-purple-500 outline-none" />
                   </div>
                 </div>
               </div>
@@ -294,9 +298,9 @@ export default function CustomTestGenerator() {
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating || selectedChapters.length === 0}
-                className={`w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 ${selectedChapters.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full bg-green-400 hover:bg-blue-700 text-white font-bold py-3 px-6 text-base rounded-xl shadow-lg transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 mt-2 ${selectedChapters.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                {isGenerating ? 'Generating Paper...' : <><CheckSquare size={20} /> Generate Test Paper</>}
+                {isGenerating ? 'Generating...' : <><CheckSquare size={20} /> Generate Test Paper</>}
               </button>
             </div>
           </div>
@@ -307,14 +311,14 @@ export default function CustomTestGenerator() {
       {generatedTest && (
         <div className="animate-in fade-in zoom-in-95 duration-500">
           <div className="flex justify-between items-center mb-4 print:hidden bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <button onClick={() => setGeneratedTest(null)} className="text-slate-300 hover:text-white px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors font-medium">
+            <button onClick={() => setGeneratedTest(null)} className="text-slate-300 hover:text-white px-4 py-2 bg-blue-200 hover:bg-slate-600 rounded-lg transition-colors font-medium">
               &larr; Configure New Test
             </button>
             <div className="flex gap-3">
-              <button onClick={handleDownloadWord} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
+              <button onClick={handleDownloadWord} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
                 <Download size={18} /> Download Word
               </button>
-              <button onClick={handlePrint} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
+              <button onClick={handlePrint} className="flex items-center gap-2 bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
                 <Printer size={18} /> Print / Save as PDF
               </button>
             </div>

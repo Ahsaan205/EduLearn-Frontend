@@ -49,6 +49,18 @@ export default function AdminDashboard() {
 
   const fileInputRef = useRef(null);
 
+  const formatText = (text) => {
+    if (typeof text !== 'string') return text;
+    const cleanedText = text.replace(/-\s*\*\*/g, '**');
+    const parts = cleanedText.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="font-bold text-slate-100">{part.slice(2, -2)}</strong>;
+      }
+      return <Latex key={i}>{part}</Latex>;
+    });
+  };
+
   useEffect(() => {
     const role = localStorage.getItem('role');
     const token = localStorage.getItem('token');
@@ -634,13 +646,13 @@ export default function AdminDashboard() {
                               <img src={q.imageUrl} alt="Question Diagram" className="max-h-32 rounded-lg object-contain border border-slate-700" />
                             </div>
                           )}
-                          <p className="text-sm font-medium mb-3 text-slate-200"><Latex>{q.questionText}</Latex></p>
+                          <p className="text-sm font-medium mb-3 text-slate-200">{formatText(q.questionText)}</p>
                           {q.type === 'MCQ' && (
                             <ul className="text-xs space-y-2 bg-slate-900/50 p-3 rounded-lg">
                               {q.options.map((opt, idx) => (
                                 <li key={idx} className={`flex items-center gap-2 ${q.correctAnswer === opt ? 'text-emerald-400 font-bold' : 'text-slate-400'}`}>
                                   <div className={`w-1.5 h-1.5 rounded-full ${q.correctAnswer === opt ? 'bg-emerald-400' : 'bg-slate-600'}`}></div>
-                                  <Latex>{opt}</Latex>
+                                  {formatText(opt)}
                                 </li>
                               ))}
                             </ul>
@@ -653,7 +665,7 @@ export default function AdminDashboard() {
                                   <img src={q.answerImageUrl} alt="Answer Diagram" className="max-h-24 rounded object-contain border border-slate-700" />
                                 </div>
                               )}
-                              <Latex>{q.correctAnswer}</Latex>
+                              {formatText(q.correctAnswer)}
                             </div>
                           )}
                         </div>

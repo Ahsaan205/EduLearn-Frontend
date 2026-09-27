@@ -46,7 +46,7 @@ export default function Navbar() {
         </div>
         <div className="flex gap-4 items-center">
           {user?.role !== 'admin' && (
-            <Link to="/custom-test-generator" className="flex items-center gap-2 hover:text-emerald-400 transition-colors font-medium mr-2">
+            <Link to="/custom-test-generator" className="flex items-center gap-2 hover:text-red-500 transition-colors font-medium mr-2">
               <Settings className="w-5 h-5" />
               <span className="hidden sm:inline">Test Generator</span>
             </Link>
