@@ -25,13 +25,13 @@ export default function ClassSubjects() {
   return (
     <div className="max-w-5xl mx-auto flex flex-col gap-4">
       <Breadcrumbs />
-      <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 text-black bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-black bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
           Choose a Subject
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {subjects.map((sub, i) => (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -40,11 +40,11 @@ export default function ClassSubjects() {
             key={sub._id}
           >
             <Link to={`/board/${boardId}/class/${classId}/subject/${sub._id}`} className="block h-full">
-              <div className="glass-panel p-6 card-hover h-full flex flex-col items-center text-center gap-4">
-                <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
-                  <Library className="w-6 h-6" />
+              <div className="glass-panel p-4 card-hover h-full flex flex-row items-center text-left gap-4 hover:bg-slate-800/50">
+                <div className="w-10 h-10 shrink-0 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                  <Library className="w-5 h-5" />
                 </div>
-                <h2 className="text-xl font-semibold">{sub.name}</h2>
+                <h2 className="text-base font-semibold text-slate-200 leading-tight">{sub.name}</h2>
               </div>
             </Link>
           </motion.div>

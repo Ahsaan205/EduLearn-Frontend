@@ -25,13 +25,13 @@ export default function BoardClasses() {
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-4">
       <Breadcrumbs />
-      <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 text-shadow-neutral-600 bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-shadow-neutral-600 bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
           Select Your Class
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {classes.map((cls, i) => (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -40,12 +40,14 @@ export default function BoardClasses() {
             key={cls._id}
           >
             <Link to={`/board/${boardId}/class/${cls._id}`} className="block h-full">
-              <div className="glass-panel p-6 card-hover h-full flex flex-col items-center justify-center text-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                  <GraduationCap className="w-8 h-8" />
+              <div className="glass-panel p-4 card-hover h-full flex flex-row items-center text-left gap-4 hover:bg-slate-800/50">
+                <div className="w-10 h-10 shrink-0 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <GraduationCap className="w-5 h-5" />
                 </div>
-                <h2 className="text-2xl font-bold">{cls.gradeLevel}th</h2>
-                <span className="text-sm text-slate-400">Class</span>
+                <div>
+                  <h2 className="text-lg font-bold text-slate-200 leading-tight">{cls.gradeLevel}th</h2>
+                  <span className="text-xs text-slate-400 font-medium">Class</span>
+                </div>
               </div>
             </Link>
           </motion.div>

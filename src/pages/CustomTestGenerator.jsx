@@ -6,6 +6,21 @@ import { toast } from 'react-toastify';
 import Latex from 'react-latex-next';
 import 'katex/dist/katex.min.css';
 
+const cleanPrefix = (text, isOption = false) => {
+  if (!text) return '';
+  let cleaned = text.trim();
+  if (isOption) {
+    // Remove "A.", "B)", "a.", "b)", "A)", "a)" from options
+    cleaned = cleaned.replace(/^[a-zA-Z][.)]\s*/, '');
+  } else {
+    // Remove "Q1.", "Q 1.", "1.", "1)", "Q12:" from questions
+    cleaned = cleaned.replace(/^(Q\s*\d+|\d+)[.)]?\s*/i, '');
+    // Also remove leading dashes if any
+    cleaned = cleaned.replace(/^-\s*/, '');
+  }
+  return cleaned;
+};
+
 export default function CustomTestGenerator() {
   const navigate = useNavigate();
 
@@ -310,15 +325,15 @@ export default function CustomTestGenerator() {
       {/* Generated Test Paper Section */}
       {generatedTest && (
         <div className="animate-in fade-in zoom-in-95 duration-500">
-          <div className="flex justify-between items-center mb-4 print:hidden bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <button onClick={() => setGeneratedTest(null)} className="text-slate-300 hover:text-white px-4 py-2 bg-blue-200 hover:bg-slate-600 rounded-lg transition-colors font-medium">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 print:hidden bg-slate-800 p-4 rounded-xl border border-slate-700">
+            <button onClick={() => setGeneratedTest(null)} className="w-full sm:w-auto text-slate-300 hover:text-white px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors font-medium text-center">
               &larr; Configure New Test
             </button>
-            <div className="flex gap-3">
-              <button onClick={handleDownloadWord} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <button onClick={handleDownloadWord} className="w-full sm:w-auto flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
                 <Download size={18} /> Download Word
               </button>
-              <button onClick={handlePrint} className="flex items-center gap-2 bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
+              <button onClick={handlePrint} className="w-full sm:w-auto flex justify-center items-center gap-2 bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
                 <Printer size={18} /> Print / Save as PDF
               </button>
             </div>
@@ -360,13 +375,13 @@ export default function CustomTestGenerator() {
                 <div className="flex flex-col gap-4">
                   {generatedTest.MCQs.map((q, idx) => (
                     <div key={idx} className="break-inside-avoid">
-                      <p className="font-semibold text-base mb-2">{idx + 1}. <Latex>{q.questionText}</Latex></p>
+                      <p className="font-semibold text-base mb-2">{idx + 1}. <Latex>{cleanPrefix(q.questionText, false)}</Latex></p>
                       {q.imageUrl && <img src={q.imageUrl} alt="Diagram" className="max-h-40 mb-2 object-contain" />}
                       <div className="grid grid-cols-2 gap-y-1 gap-x-4 pl-6 text-sm">
                         {q.options.map((opt, optIdx) => (
                           <div key={optIdx} className="flex items-start gap-2">
                             <span className="font-medium">{String.fromCharCode(65 + optIdx)})</span>
-                            <span><Latex>{opt}</Latex></span>
+                            <span><Latex>{cleanPrefix(opt, true)}</Latex></span>
                           </div>
                         ))}
                       </div>
@@ -386,7 +401,7 @@ export default function CustomTestGenerator() {
                 <div className="flex flex-col gap-6">
                   {generatedTest.Shorts.map((q, idx) => (
                     <div key={idx} className="break-inside-avoid">
-                      <p className="font-semibold text-base mb-1">Q{idx + 1}. <Latex>{q.questionText}</Latex></p>
+                      <p className="font-semibold text-base mb-1">Q{idx + 1}. <Latex>{cleanPrefix(q.questionText, false)}</Latex></p>
                       {q.imageUrl && <img src={q.imageUrl} alt="Diagram" className="max-h-40 mb-2 object-contain" />}
                     </div>
                   ))}
@@ -404,7 +419,7 @@ export default function CustomTestGenerator() {
                 <div className="flex flex-col gap-8">
                   {generatedTest.Longs.map((q, idx) => (
                     <div key={idx} className="break-inside-avoid">
-                      <p className="font-semibold text-base mb-1">Q{idx + 1}. <Latex>{q.questionText}</Latex></p>
+                      <p className="font-semibold text-base mb-1">Q{idx + 1}. <Latex>{cleanPrefix(q.questionText, false)}</Latex></p>
                       {q.imageUrl && <img src={q.imageUrl} alt="Diagram" className="max-h-40 mb-2 object-contain" />}
                     </div>
                   ))}

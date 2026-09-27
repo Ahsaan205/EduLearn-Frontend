@@ -30,7 +30,7 @@ export default function Home() {
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-black bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-          Welcome to EduPlatform
+          Welcome to EduLearn
         </h1>
         <p className="text-slate-400 text-lg">Select your educational board to get started</p>
       </div>
@@ -50,9 +50,6 @@ export default function Home() {
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold mb-1">{board.name}</h2>
-                  <span className="text-xs font-medium px-2 py-1 bg-slate-700/50 rounded-full text-slate-300">
-                    {board.type} Board
-                  </span>
                 </div>
               </div>
             </Link>
