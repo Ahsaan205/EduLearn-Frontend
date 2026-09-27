@@ -61,7 +61,7 @@
 
 @layer base {
   body {
-    @apply bg-slate-900 text-slate-100 antialiased selection:bg-[#8B9A6E]/30;
+    @apply bg-slate-900 text-slate-100 antialiased selection:bg-[#bfdbfe];
     font-family: 'Inter', 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', system-ui, sans-serif;
     line-height: 1.8;
   }
