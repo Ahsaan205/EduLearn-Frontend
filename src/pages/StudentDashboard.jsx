@@ -1,12 +1,24 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { Trophy, CheckCircle, Clock } from 'lucide-react';
 
 export default function StudentDashboard({ user }) {
+  const navigate = useNavigate();
   const [progress, setProgress] = useState([]);
   const [frequentVisits, setFrequentVisits] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedVisitId, setExpandedVisitId] = useState(null);
+
+  const handleVisitClick = (v) => {
+    if (v.itemType === 'Chapter') {
+      setExpandedVisitId(prev => prev === v.itemId?._id ? null : v.itemId?._id);
+    } else if (v.itemType === 'Subject') {
+      // Subject route requires board and class, using 'b' and 'c' as placeholders
+      navigate(`/board/b/class/c/subject/${v.itemId._id}`);
+    }
+  };
 
   useEffect(() => {
     Promise.all([
@@ -118,17 +130,67 @@ export default function StudentDashboard({ user }) {
         <div className="glass-panel p-6">
           <h2 className="text-xl font-bold mb-4">Frequently Visited</h2>
           <div className="flex flex-col gap-3">
-            {frequentVisits.length > 0 ? frequentVisits.map((v, i) => (
-              <div key={i} className="flex justify-between items-center p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-                <div className="flex flex-col">
-                  <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider">{v.itemType}</span>
-                  <span className="font-medium text-white text-lg">{v.itemId?.title || v.itemId?.name || 'Unknown'}</span>
+            {frequentVisits.length > 0 ? frequentVisits.map((v, i) => {
+              const isExpanded = expandedVisitId === v.itemId?._id;
+              
+              // Simple relative time formatter
+              const getRelativeTime = (dateString) => {
+                if (!dateString) return '';
+                const diff = new Date() - new Date(dateString);
+                const minutes = Math.floor(diff / 60000);
+                if (minutes < 60) return `${minutes || 1}m ago`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours}h ago`;
+                return `${Math.floor(hours / 24)}d ago`;
+              };
+
+              return (
+                <div 
+                  key={i} 
+                  onClick={() => handleVisitClick(v)}
+                  className={`flex flex-col p-4 bg-slate-800/50 rounded-lg border hover:border-blue-500/50 hover:bg-slate-800 transition-all cursor-pointer ${isExpanded ? 'border-blue-500/50 ring-1 ring-blue-500/30' : 'border-slate-700'}`}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider">{v.itemType}</span>
+                      <span className="font-medium text-white text-lg">{v.itemId?.title || v.itemId?.name || 'Unknown'}</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-blue-500/10 text-blue-300 px-3 py-1.5 rounded-full text-sm font-semibold shrink-0">
+                       <span>{v.count}</span> <span className="text-xs">visits</span>
+                    </div>
+                  </div>
+                  
+                  {v.lastVisited && (
+                    <div className="text-xs text-slate-500 font-medium mb-1">
+                      Last visited: {getRelativeTime(v.lastVisited)}
+                    </div>
+                  )}
+
+                  {v.itemType === 'Chapter' && isExpanded && (
+                    <div className="mt-3 pt-3 border-t border-slate-700/50 flex gap-2">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigate(`/chapter/${v.itemId._id}/quiz`); }}
+                        className="flex-1 bg-[#5C7285] hover:bg-[#4A5D6D] text-white text-xs font-bold py-2 rounded-lg transition-colors"
+                      >
+                        MCQs
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigate(`/chapter/${v.itemId._id}/short-questions`); }}
+                        className="flex-1 bg-[#8B9A6E] hover:bg-[#76855b] text-white text-xs font-bold py-2 rounded-lg transition-colors"
+                      >
+                        Short Qs
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigate(`/chapter/${v.itemId._id}/long-questions`); }}
+                        className="flex-1 bg-[#A37C82] hover:bg-[#8F6A70] text-white text-xs font-bold py-2 rounded-lg transition-colors"
+                      >
+                        Long Qs
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center gap-2 bg-blue-500/10 text-blue-300 px-3 py-1.5 rounded-full text-sm font-semibold">
-                   <span>{v.count}</span> <span className="text-xs">visits</span>
-                </div>
-              </div>
-            )) : (
+              );
+            }) : (
                <div className="text-slate-500 text-sm">No frequently visited items yet. Explore some subjects or chapters!</div>
             )}
           </div>

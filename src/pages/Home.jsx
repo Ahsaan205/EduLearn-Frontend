@@ -11,6 +11,7 @@ export default function Home() {
   const [boards, setBoards] = useState([]);
   const [frequentVisits, setFrequentVisits] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedVisitId, setExpandedVisitId] = useState(null);
 
   useEffect(() => {
     api.get('/public/boards').then(res => {
@@ -37,7 +38,7 @@ export default function Home() {
 
   const handleVisitClick = (v) => {
     if (v.itemType === 'Chapter') {
-      navigate(`/chapter/${v.itemId._id}/quiz`);
+      setExpandedVisitId(prev => prev === v.itemId?._id ? null : v.itemId?._id);
     } else if (v.itemType === 'Subject') {
       // Subject route requires board and class, using 'b' and 'c' as placeholders
       // because SubjectChapters.jsx only strictly relies on subjectId
@@ -63,21 +64,67 @@ export default function Home() {
             Frequently Visited
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {frequentVisits.map((v, i) => (
-              <div 
-                key={i} 
-                onClick={() => handleVisitClick(v)}
-                className="flex flex-col justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800 transition-all cursor-pointer"
-              >
-                <div className="flex flex-col mb-4">
-                  <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider mb-1">{v.itemType}</span>
-                  <span className="font-bold text-white text-base line-clamp-2">{v.itemId?.title || v.itemId?.name || 'Unknown'}</span>
+            {frequentVisits.map((v, i) => {
+              const isExpanded = expandedVisitId === v.itemId?._id;
+              
+              // Simple relative time formatter
+              const getRelativeTime = (dateString) => {
+                if (!dateString) return '';
+                const diff = new Date() - new Date(dateString);
+                const minutes = Math.floor(diff / 60000);
+                if (minutes < 60) return `${minutes || 1}m ago`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours}h ago`;
+                return `${Math.floor(hours / 24)}d ago`;
+              };
+
+              return (
+                <div 
+                  key={i} 
+                  onClick={() => handleVisitClick(v)}
+                  className={`flex flex-col p-4 bg-slate-800/50 rounded-lg border hover:border-blue-500/50 hover:bg-slate-800 transition-all cursor-pointer ${isExpanded ? 'border-blue-500/50 ring-1 ring-blue-500/30' : 'border-slate-700'}`}
+                >
+                  <div className="flex flex-col mb-4">
+                    <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider mb-1">{v.itemType}</span>
+                    <span className="font-bold text-white text-base line-clamp-2">{v.itemId?.title || v.itemId?.name || 'Unknown'}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center mt-auto">
+                    <div className="self-start bg-blue-500/10 text-blue-300 border border-blue-500/20 px-3 py-1 rounded-full text-xs font-semibold">
+                       {v.count} visits
+                    </div>
+                    {v.lastVisited && (
+                      <div className="text-xs text-slate-500 font-medium">
+                        {getRelativeTime(v.lastVisited)}
+                      </div>
+                    )}
+                  </div>
+
+                  {v.itemType === 'Chapter' && isExpanded && (
+                    <div className="mt-4 pt-4 border-t border-slate-700/50 flex flex-col gap-2">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigate(`/chapter/${v.itemId._id}/quiz`); }}
+                        className="w-full bg-[#5C7285] hover:bg-[#4A5D6D] text-white text-xs font-bold py-2 rounded-lg transition-colors"
+                      >
+                        MCQs
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigate(`/chapter/${v.itemId._id}/short-questions`); }}
+                        className="w-full bg-[#8B9A6E] hover:bg-[#76855b] text-white text-xs font-bold py-2 rounded-lg transition-colors"
+                      >
+                        Short Qs
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigate(`/chapter/${v.itemId._id}/long-questions`); }}
+                        className="w-full bg-[#A37C82] hover:bg-[#8F6A70] text-white text-xs font-bold py-2 rounded-lg transition-colors"
+                      >
+                        Long Qs
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <div className="self-start bg-blue-500/10 text-blue-300 border border-blue-500/20 px-3 py-1 rounded-full text-xs font-semibold">
-                   {v.count} visits
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
