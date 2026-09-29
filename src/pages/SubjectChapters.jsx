@@ -79,7 +79,7 @@ export default function SubjectChapters() {
                 <button onClick={() => handleStart(ch._id, 'Long')} className="flex-1 sm:flex-none bg-[#A37C82] hover:bg-[#8F6A70] text-[#FFFFFF] rounded-xl shadow-md shadow-[#A37C82]/30 flex items-center justify-center gap-2 text-sm font-bold py-2.5 px-5 transition-all duration-300 transform hover:-translate-y-1 active:scale-95">
                   Long Qs
                 </button>
-                <button onClick={() => window.open(`/chapter/${ch._id}/print`, '_blank')} className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-600/30 flex items-center justify-center gap-2 text-sm font-bold py-2.5 px-5 transition-all duration-300 transform hover:-translate-y-1 active:scale-95" title="Download Chapter PDF">
+                <button onClick={() => window.open(`/chapter/${ch._id}/print?title=${encodeURIComponent(ch.title)}`, '_blank')} className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md shadow-blue-600/30 flex items-center justify-center gap-2 text-sm font-bold py-2.5 px-5 transition-all duration-300 transform hover:-translate-y-1 active:scale-95" title="Download Chapter PDF">
                   <Download className="w-4 h-4" /> PDF
                 </button>
               </div>

@@ -12,6 +12,7 @@ export default function ChapterPrintView() {
   const [chapterTitle, setChapterTitle] = useState("Chapter Notes");
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("Preparing Document...");
+  const [canClose, setCanClose] = useState(false);
   const titleRef = useRef("Chapter Notes");
 
   useEffect(() => {
@@ -24,9 +25,16 @@ export default function ChapterPrintView() {
     document.head.appendChild(style);
 
     api.get(`/public/breadcrumbs?chapterId=${chapterId}`).then(res => {
-       if (res.data.chapter) {
-           setChapterTitle(res.data.chapter);
-           titleRef.current = res.data.chapter;
+       if (res.data) {
+           const { subject, chapter } = res.data;
+           const urlParams = new URLSearchParams(window.location.search);
+           const title = urlParams.get('title') || '';
+           
+           const fullTitle = `${subject ? subject + ' - ' : ''}${chapter ? chapter + ': ' : ''}${title}`;
+           setChapterTitle(fullTitle);
+           
+           const fileName = `${subject || ''}_${chapter || ''}_${title}`.replace(/[^a-zA-Z0-9]/g, '_');
+           titleRef.current = fileName || 'Chapter_Notes';
        }
     }).catch(console.error);
 
@@ -53,12 +61,14 @@ export default function ChapterPrintView() {
           
           html2pdf().set(opt).from(element).save().then(() => {
              setStatus("Download Complete! You can safely close this tab.");
+             setCanClose(true);
              setTimeout(() => {
                 window.close(); // Try to close automatically
              }, 3000);
           }).catch(err => {
              console.error("PDF generation failed", err);
              setStatus("Failed to generate PDF. Please try again.");
+             setCanClose(true);
           });
         }, 1500);
       })
@@ -108,14 +118,24 @@ export default function ChapterPrintView() {
         <div className="bg-[#FFFFFF] p-8 rounded-xl shadow-lg border border-[#e2e8f0] text-center max-w-md w-full">
           <h2 className="text-2xl font-bold mb-4 text-[#1e293b]">{status}</h2>
           <p className="text-[#475569] mb-6">Please do not close this tab until the download is complete.</p>
-          <button 
-            onClick={() => { window.close(); navigate(-1); }} 
-            className="bg-[#1e293b] text-[#FFFFFF] px-6 py-2 rounded-lg font-bold hover:bg-[#334155] transition-colors"
-          >
-            Close Tab
-          </button>
+          {canClose && (
+            <button 
+              onClick={() => { window.close(); navigate(-1); }} 
+              className="bg-[#1e293b] text-[#FFFFFF] px-6 py-2 rounded-lg font-bold hover:bg-[#334155] transition-colors"
+            >
+              Close Tab
+            </button>
+          )}
         </div>
       </div>
+
+      <style>{`
+        #pdf-content .katex .fbox, 
+        #pdf-content .katex .boxed { 
+           border: none !important; 
+           padding: 0 !important; 
+        }
+      `}</style>
 
       {/* The actual content to be exported to PDF, rendered in normal flow so html2canvas can capture it perfectly */}
       <div className="absolute top-0 left-0 w-full flex justify-center z-0 p-8">
@@ -145,8 +165,8 @@ export default function ChapterPrintView() {
                          </div>
                       ))}
                     </div>
-                    <div className="ml-6 mt-1 text-sm bg-[#f3f4f6] px-3 py-1 inline-block rounded font-medium border border-[#d1d5db] text-[#111827]">
-                      <strong>Answer:</strong> <Latex>{q.correctAnswer}</Latex>
+                    <div className="ml-6 mt-1 text-base text-[#111827]">
+                      <strong>Answer:</strong> <strong className="font-bold"><Latex>{q.correctAnswer}</Latex></strong>
                     </div>
                   </div>
                 ))}
