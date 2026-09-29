@@ -15,7 +15,14 @@ export default function ChapterPrintView() {
   const titleRef = useRef("Chapter Notes");
 
   useEffect(() => {
-    // Fetch breadcrumbs to get the chapter name
+    // Hide the main Navbar and set body background
+    const style = document.createElement('style');
+    style.innerHTML = `
+      header, nav, .navbar { display: none !important; }
+      body { background-color: #f1f5f9 !important; }
+    `;
+    document.head.appendChild(style);
+
     api.get(`/public/breadcrumbs?chapterId=${chapterId}`).then(res => {
        if (res.data.chapter) {
            setChapterTitle(res.data.chapter);
@@ -29,19 +36,26 @@ export default function ChapterPrintView() {
         setLoading(false);
         setStatus("Generating PDF... Please wait.");
         
-        // Automatically generate PDF after brief delay for rendering math
         setTimeout(() => {
           const element = document.getElementById('pdf-content');
+          if (!element) {
+            setStatus("Failed to find content. Please try again.");
+            return;
+          }
+          
           const opt = {
             margin:       10,
-            filename:     `${titleRef.current}.pdf`,
+            filename:     `${titleRef.current.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
+            html2canvas:  { scale: 2, useCORS: true, logging: true },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
           };
           
           html2pdf().set(opt).from(element).save().then(() => {
              setStatus("Download Complete! You can safely close this tab.");
+             setTimeout(() => {
+                window.close(); // Try to close automatically
+             }, 3000);
           }).catch(err => {
              console.error("PDF generation failed", err);
              setStatus("Failed to generate PDF. Please try again.");
@@ -53,6 +67,10 @@ export default function ChapterPrintView() {
         setLoading(false);
         setStatus("Error loading questions.");
       });
+
+      return () => {
+        document.head.removeChild(style);
+      };
   }, [chapterId]);
 
   const formatText = (text) => {
@@ -67,101 +85,118 @@ export default function ChapterPrintView() {
     });
   };
 
-  if (loading) return <div className="text-center py-10 text-xl font-medium">{status}</div>;
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f1f5f9]">
+        <div className="bg-[#FFFFFF] p-8 rounded-xl shadow-lg border border-[#e2e8f0] text-center max-w-md w-full">
+          <h2 className="text-2xl font-bold mb-4 text-[#1e293b]">{status}</h2>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2563eb] mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
 
   const mcqs = questions.filter(q => q.type === 'MCQ');
   const shorts = questions.filter(q => q.type === 'Short');
   const longs = questions.filter(q => q.type === 'Long');
 
   return (
-    <div className="bg-slate-100 min-h-screen p-4 sm:p-8 flex flex-col items-center">
+    <div className="min-h-screen">
       
-      <div className="mb-6 w-full max-w-4xl bg-white text-blue-900 p-6 rounded-xl shadow-lg border border-blue-200 text-center">
-        <h2 className="text-2xl font-bold mb-2">{status}</h2>
-        <p className="text-slate-600 mb-4">Please do not close this tab until the download is complete.</p>
-        <button onClick={() => window.close()} className="bg-slate-800 text-white px-6 py-2 rounded-lg font-bold hover:bg-slate-700 transition-colors">Close Tab</button>
+      {/* Full-screen Loading Overlay to hide the PDF content from the user while it generates */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f1f5f9]">
+        <div className="bg-[#FFFFFF] p-8 rounded-xl shadow-lg border border-[#e2e8f0] text-center max-w-md w-full">
+          <h2 className="text-2xl font-bold mb-4 text-[#1e293b]">{status}</h2>
+          <p className="text-[#475569] mb-6">Please do not close this tab until the download is complete.</p>
+          <button 
+            onClick={() => { window.close(); navigate(-1); }} 
+            className="bg-[#1e293b] text-[#FFFFFF] px-6 py-2 rounded-lg font-bold hover:bg-[#334155] transition-colors"
+          >
+            Close Tab
+          </button>
+        </div>
       </div>
 
-      {/* Hidden container that gets converted to PDF */}
-      <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
-        <div id="pdf-content" className="print-container bg-white text-black p-8 w-[210mm]" style={{ fontFamily: 'Times New Roman, serif' }}>
-          <div className="text-center mb-8 border-b-2 border-black pb-4">
+      {/* The actual content to be exported to PDF, rendered in normal flow so html2canvas can capture it perfectly */}
+      <div className="absolute top-0 left-0 w-full flex justify-center z-0 p-8">
+        <div id="pdf-content" className="bg-[#FFFFFF] text-[#000000] p-8 w-[210mm] max-w-full" style={{ fontFamily: 'Times New Roman, serif' }}>
+          <div className="text-center mb-8 border-b-2 border-[#000000] pb-4">
             <h1 className="text-3xl font-bold mb-2">EduLearn Notes</h1>
             <h2 className="text-xl">{chapterTitle}</h2>
           </div>
 
-      {/* MCQs */}
-      {mcqs.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-4 border-b border-gray-400 pb-1 uppercase tracking-wider">Multiple Choice Questions</h3>
-          <div className="flex flex-col gap-6">
-            {mcqs.map((q, i) => (
-              <div key={q._id} className="avoid-break">
-                <div className="font-bold mb-2 flex gap-2">
-                  <span>{i + 1}.</span> 
-                  <div>{formatText(q.questionText)}</div>
-                </div>
-                {q.imageUrl && <img src={q.imageUrl} alt="Diagram" className="max-h-40 object-contain mb-2 ml-6" />}
-                <div className="ml-6 grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                  {q.options.map((opt, optIdx) => (
-                     <div key={optIdx} className="flex gap-2">
-                       <span>{String.fromCharCode(97 + optIdx)})</span>
-                       <span><Latex>{opt}</Latex></span>
-                     </div>
-                  ))}
-                </div>
-                <div className="ml-6 mt-1 text-sm bg-gray-100 px-3 py-1 inline-block rounded font-medium border border-gray-300">
-                  <strong>Answer:</strong> <Latex>{q.correctAnswer}</Latex>
-                </div>
+          {/* MCQs */}
+          {mcqs.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold mb-4 border-b border-[#9ca3af] pb-1 uppercase tracking-wider">Multiple Choice Questions</h3>
+              <div className="flex flex-col gap-6">
+                {mcqs.map((q, i) => (
+                  <div key={q._id} style={{ pageBreakInside: 'avoid' }}>
+                    <div className="font-bold mb-2 flex gap-2">
+                      <span>{i + 1}.</span> 
+                      <div>{formatText(q.questionText)}</div>
+                    </div>
+                    {q.imageUrl && <img src={q.imageUrl} alt="Diagram" className="max-h-40 object-contain mb-2 ml-6" crossOrigin="anonymous" />}
+                    <div className="ml-6 grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                      {q.options.map((opt, optIdx) => (
+                         <div key={optIdx} className="flex gap-2">
+                           <span>{String.fromCharCode(97 + optIdx)})</span>
+                           <span><Latex>{opt}</Latex></span>
+                         </div>
+                      ))}
+                    </div>
+                    <div className="ml-6 mt-1 text-sm bg-[#f3f4f6] px-3 py-1 inline-block rounded font-medium border border-[#d1d5db] text-[#111827]">
+                      <strong>Answer:</strong> <Latex>{q.correctAnswer}</Latex>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          )}
 
-      {/* Short Questions */}
-      {shorts.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-4 border-b border-gray-400 pb-1 uppercase tracking-wider page-break">Short Answer Questions</h3>
-          <div className="flex flex-col gap-6">
-            {shorts.map((q, i) => (
-              <div key={q._id} className="avoid-break mb-4">
-                <div className="font-bold mb-2 flex gap-2">
-                  <span>Q{i + 1}.</span> 
-                  <div>{formatText(q.questionText)}</div>
-                </div>
-                {q.imageUrl && <img src={q.imageUrl} alt="Diagram" className="max-h-40 object-contain mb-2 ml-8" />}
-                <div className="ml-8 text-gray-800 leading-relaxed whitespace-pre-wrap">
-                  {q.answerImageUrl && <img src={q.answerImageUrl} alt="Answer Diagram" className="max-h-40 object-contain mb-2" />}
-                  {q.correctAnswer ? formatText(q.correctAnswer) : <em>No answer provided</em>}
-                </div>
+          {/* Short Questions */}
+          {shorts.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold mb-4 border-b border-[#9ca3af] pb-1 uppercase tracking-wider" style={{ pageBreakBefore: 'always' }}>Short Answer Questions</h3>
+              <div className="flex flex-col gap-6">
+                {shorts.map((q, i) => (
+                  <div key={q._id} className="mb-4" style={{ pageBreakInside: 'avoid' }}>
+                    <div className="font-bold mb-2 flex gap-2">
+                      <span>Q{i + 1}.</span> 
+                      <div>{formatText(q.questionText)}</div>
+                    </div>
+                    {q.imageUrl && <img src={q.imageUrl} alt="Diagram" className="max-h-40 object-contain mb-2 ml-8" crossOrigin="anonymous" />}
+                    <div className="ml-8 text-[#1f2937] leading-relaxed whitespace-pre-wrap">
+                      {q.answerImageUrl && <img src={q.answerImageUrl} alt="Answer Diagram" className="max-h-40 object-contain mb-2" crossOrigin="anonymous" />}
+                      {q.correctAnswer ? formatText(q.correctAnswer) : <em>No answer provided</em>}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          )}
 
-      {/* Long Questions */}
-      {longs.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-4 border-b border-gray-400 pb-1 uppercase tracking-wider page-break">Long Answer Questions</h3>
-          <div className="flex flex-col gap-8">
-            {longs.map((q, i) => (
-              <div key={q._id} className="avoid-break mb-6">
-                <div className="font-bold mb-3 flex gap-2">
-                  <span>Q{i + 1}.</span> 
-                  <div>{formatText(q.questionText)}</div>
-                </div>
-                {q.imageUrl && <img src={q.imageUrl} alt="Diagram" className="max-h-48 object-contain mb-3 ml-8" />}
-                <div className="ml-8 text-gray-800 leading-relaxed whitespace-pre-wrap">
-                  {q.answerImageUrl && <img src={q.answerImageUrl} alt="Answer Diagram" className="max-h-48 object-contain mb-3" />}
-                  {q.correctAnswer ? formatText(q.correctAnswer) : <em>No answer provided</em>}
-                </div>
+          {/* Long Questions */}
+          {longs.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold mb-4 border-b border-[#9ca3af] pb-1 uppercase tracking-wider" style={{ pageBreakBefore: 'always' }}>Long Answer Questions</h3>
+              <div className="flex flex-col gap-8">
+                {longs.map((q, i) => (
+                  <div key={q._id} className="mb-6" style={{ pageBreakInside: 'avoid' }}>
+                    <div className="font-bold mb-3 flex gap-2">
+                      <span>Q{i + 1}.</span> 
+                      <div>{formatText(q.questionText)}</div>
+                    </div>
+                    {q.imageUrl && <img src={q.imageUrl} alt="Diagram" className="max-h-48 object-contain mb-3 ml-8" crossOrigin="anonymous" />}
+                    <div className="ml-8 text-[#1f2937] leading-relaxed whitespace-pre-wrap">
+                      {q.answerImageUrl && <img src={q.answerImageUrl} alt="Answer Diagram" className="max-h-48 object-contain mb-3" crossOrigin="anonymous" />}
+                      {q.correctAnswer ? formatText(q.correctAnswer) : <em>No answer provided</em>}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          )}
 
         </div>
       </div>
