@@ -75,13 +75,13 @@ export default function ChapterTextQuestions({ type }) {
                 onClick={() => setExpandedId(isExpanded ? null : q._id)}
               >
                 <div className="p-5 md:p-6 flex justify-between items-start gap-4">
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     {q.imageUrl && (
                       <div className="mb-4">
                         <img src={q.imageUrl} alt="Question Diagram" className="max-h-48 rounded-lg object-contain border border-slate-700 bg-slate-900/50" />
                       </div>
                     )}
-                    <h3 className={`text-base font-medium leading-relaxed transition-colors ${isExpanded ? 'text-sky-700 font-bold' : 'text-slate-100'}`}>
+                    <h3 className={`text-base font-medium leading-relaxed transition-colors overflow-x-auto pb-2 ${isExpanded ? 'text-sky-700 font-bold' : 'text-slate-100'}`}>
                       <span className="text-sky-600 font-bold mr-2">Q{i + 1}.</span> 
                       {formatText(q.questionText)}
                     </h3>
@@ -102,7 +102,7 @@ export default function ChapterTextQuestions({ type }) {
                       <div className="px-5 md:px-6 pb-6 pt-1">
                         <div className="p-4 bg-slate-900/50 rounded-xl border border-slate-700/50 relative overflow-hidden">
                           <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-indigo-500"></div>
-                          <div className="pl-3 text-slate-300 leading-relaxed font-normal whitespace-pre-wrap">
+                          <div className="pl-3 text-slate-300 leading-relaxed font-normal whitespace-pre-wrap overflow-x-auto pb-2">
                             {q.answerImageUrl && (
                               <div className="mb-4">
                                 <img src={q.answerImageUrl} alt="Answer Diagram" className="max-h-48 rounded-lg object-contain border border-slate-700 bg-slate-900/50" />

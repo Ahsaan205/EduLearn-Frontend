@@ -128,7 +128,7 @@ export default function ChapterQuiz() {
                   <div className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-100 text-sm font-bold mt-0.5">
                     {i + 1}
                   </div>
-                  <div className="text-base font-medium text-slate-100 leading-relaxed">
+                  <div className="text-base font-medium text-slate-100 leading-relaxed overflow-x-auto min-w-0 pb-1">
                     <Latex>{q.questionText}</Latex>
                   </div>
                 </div>
@@ -152,7 +152,7 @@ export default function ChapterQuiz() {
                     
                     return (
                       <div key={optIdx} className={`flex items-center justify-between gap-3 ${style}`}>
-                        <div><Latex>{opt}</Latex></div>
+                        <div className="overflow-x-auto min-w-0 pb-1"><Latex>{opt}</Latex></div>
                         {badge}
                       </div>
                     );
@@ -181,7 +181,7 @@ export default function ChapterQuiz() {
           </div>
         </div>
         
-        <h2 className="text-lg font-bold text-white mb-6 leading-relaxed">
+        <h2 className="text-lg font-bold text-white mb-6 leading-relaxed overflow-x-auto pb-2">
           <Latex>{currentQ.questionText}</Latex>
         </h2>
         
@@ -204,11 +204,11 @@ export default function ChapterQuiz() {
                 onClick={() => handleSelectOption(opt)}
                 className={btnClass}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 w-full">
                   <div className={`flex-shrink-0 w-5 h-5 rounded-full border flex items-center justify-center ${isSelected ? 'border-blue-500' : 'border-slate-500'}`}>
                      {isSelected && <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />}
                   </div>
-                  <div className="text-sm sm:text-base"><Latex>{opt}</Latex></div>
+                  <div className="text-sm sm:text-base overflow-x-auto min-w-0 pb-1"><Latex>{opt}</Latex></div>
                 </div>
               </button>
             )

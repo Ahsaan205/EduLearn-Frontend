@@ -65,8 +65,8 @@ export default function SubjectChapters() {
                 <div className="w-12 h-12 rounded-full bg-cyan-400 flex items-center justify-center text-lg font-bold text-slate-300 shrink-0">
                   {ch.chapterNumber}
                 </div>
-                <div className="truncate">
-                  <h2 className="text-lg font-semibold truncate">{ch.title}</h2>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-base sm:text-lg font-semibold break-words whitespace-normal leading-tight">{ch.title}</h2>
                 </div>
               </div>
               <div className="flex flex-wrap gap-3 w-full sm:w-auto mt-5 sm:mt-0">
