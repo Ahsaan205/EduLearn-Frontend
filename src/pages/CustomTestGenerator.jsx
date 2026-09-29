@@ -51,6 +51,8 @@ export default function CustomTestGenerator() {
   const [generatedTest, setGeneratedTest] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const [availableCounts, setAvailableCounts] = useState({ MCQ: 0, Short: 0, Long: 0 });
+
   useEffect(() => {
     const total = (counts.MCQ * marks.MCQ) + (counts.Short * marks.Short) + (counts.Long * marks.Long);
     setTestMetadata(prev => ({ ...prev, totalMarks: total.toString() }));
@@ -92,6 +94,33 @@ export default function CustomTestGenerator() {
     }
     api.get(`/public/subjects/${selectedSubject}/chapters`).then(res => setChapters(res.data));
   }, [selectedSubject]);
+
+  // Fetch available questions count when Selected Chapters change
+  useEffect(() => {
+    const fetchQuestionCounts = async () => {
+      if (selectedChapters.length === 0) {
+        setAvailableCounts({ MCQ: 0, Short: 0, Long: 0 });
+        return;
+      }
+      try {
+        let mcq = 0, short = 0, long = 0;
+        const promises = selectedChapters.map(id => api.get(`/public/chapters/${id}/questions`));
+        const results = await Promise.all(promises);
+        results.forEach(res => {
+          const questions = res.data || [];
+          questions.forEach(q => {
+            if (q.type === 'MCQ') mcq++;
+            else if (q.type === 'Short') short++;
+            else if (q.type === 'Long') long++;
+          });
+        });
+        setAvailableCounts({ MCQ: mcq, Short: short, Long: long });
+      } catch (err) {
+        console.error("Error fetching question counts", err);
+      }
+    };
+    fetchQuestionCounts();
+  }, [selectedChapters]);
 
   const handleChapterToggle = (id) => {
     if (selectedChapters.includes(id)) {
@@ -266,17 +295,26 @@ export default function CustomTestGenerator() {
 
                   <div className="grid grid-cols-3 gap-2 items-center p-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
                     <span className="font-semibold text-slate-300 text-sm">MCQs</span>
-                    <input type="number" min="0" value={counts.MCQ} onChange={(e) => handleCountChange('MCQ', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
+                    <div className="flex items-center justify-center bg-slate-900 border border-slate-600 rounded focus-within:border-blue-500 w-full overflow-hidden">
+                      <input type="number" min="0" max={availableCounts.MCQ} value={counts.MCQ} onChange={(e) => handleCountChange('MCQ', e.target.value)} className="w-full bg-transparent p-1 text-sm text-right text-white outline-none" />
+                      <span className="text-[10px] text-slate-400 whitespace-nowrap pr-2 pl-1">/ {availableCounts.MCQ}</span>
+                    </div>
                     <input type="number" min="0" step="0.5" value={marks.MCQ} onChange={(e) => handleMarksChange('MCQ', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
                   </div>
                   <div className="grid grid-cols-3 gap-2 items-center p-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
                     <span className="font-semibold text-slate-300 text-sm">Short Qs</span>
-                    <input type="number" min="0" value={counts.Short} onChange={(e) => handleCountChange('Short', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
+                    <div className="flex items-center justify-center bg-slate-900 border border-slate-600 rounded focus-within:border-blue-500 w-full overflow-hidden">
+                      <input type="number" min="0" max={availableCounts.Short} value={counts.Short} onChange={(e) => handleCountChange('Short', e.target.value)} className="w-full bg-transparent p-1 text-sm text-right text-white outline-none" />
+                      <span className="text-[10px] text-slate-400 whitespace-nowrap pr-2 pl-1">/ {availableCounts.Short}</span>
+                    </div>
                     <input type="number" min="0" step="0.5" value={marks.Short} onChange={(e) => handleMarksChange('Short', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
                   </div>
                   <div className="grid grid-cols-3 gap-2 items-center p-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
                     <span className="font-semibold text-slate-300 text-sm">Long Qs</span>
-                    <input type="number" min="0" value={counts.Long} onChange={(e) => handleCountChange('Long', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
+                    <div className="flex items-center justify-center bg-slate-900 border border-slate-600 rounded focus-within:border-blue-500 w-full overflow-hidden">
+                      <input type="number" min="0" max={availableCounts.Long} value={counts.Long} onChange={(e) => handleCountChange('Long', e.target.value)} className="w-full bg-transparent p-1 text-sm text-right text-white outline-none" />
+                      <span className="text-[10px] text-slate-400 whitespace-nowrap pr-2 pl-1">/ {availableCounts.Long}</span>
+                    </div>
                     <input type="number" min="0" step="0.5" value={marks.Long} onChange={(e) => handleMarksChange('Long', e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded p-1 text-sm text-center text-white focus:border-blue-500 outline-none" />
                   </div>
                 </div>

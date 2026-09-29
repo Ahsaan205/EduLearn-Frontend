@@ -262,12 +262,19 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleClearQuestions = async () => {
-    if (!window.confirm('Are you sure you want to clear all questions in this chapter?')) return;
+  const handleClearQuestions = async (type = null) => {
+    const confirmMessage = type 
+      ? `Are you sure you want to clear all ${type} questions in this chapter?` 
+      : 'Are you sure you want to clear all questions in this chapter?';
+    
+    if (!window.confirm(confirmMessage)) return;
     try {
-      await api.delete(`/admin/chapters/${selectedChapter}/questions`);
+      const url = type 
+        ? `/admin/chapters/${selectedChapter}/questions?type=${type}`
+        : `/admin/chapters/${selectedChapter}/questions`;
+      await api.delete(url);
       fetchQuestions(selectedChapter);
-      toast.success('All questions cleared');
+      toast.success(type ? `All ${type} questions cleared` : 'All questions cleared');
     } catch (err) {
       toast.error('Error clearing questions');
     }
@@ -521,8 +528,12 @@ export default function AdminDashboard() {
                         ))}
                       </div>
                       {questions.length > 0 && (
-                        <button onClick={handleClearQuestions} className="text-xs flex items-center gap-1 text-white hover:text-white bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-md shadow-md font-bold transition-colors ml-2">
-                          <Trash2 size={14} /> Clear All
+                        <button 
+                          onClick={() => handleClearQuestions(questionFilter === 'All' ? null : questionFilter)} 
+                          className="text-xs flex items-center gap-1 text-white hover:text-white bg-red-600 hover:bg-red-500 px-3 py-1.5 rounded-md shadow-md font-bold transition-colors ml-2"
+                        >
+                          <Trash2 size={14} /> 
+                          {questionFilter === 'All' ? 'Clear All' : `Clear ${questionFilter}s`}
                         </button>
                       )}
                     </div>
