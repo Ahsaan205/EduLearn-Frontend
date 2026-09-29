@@ -41,6 +41,11 @@ export default function ChapterTextQuestions({ type }) {
         console.error(err);
         setLoading(false);
       });
+
+    const token = localStorage.getItem('token');
+    if (token && chapterId) {
+      api.post('/visits', { itemType: 'Chapter', itemId: chapterId }).catch(err => console.error('Failed to record visit:', err));
+    }
   }, [chapterId, type]);
 
   if (loading) return <div className="text-center py-20 text-base font-medium animate-pulse">Loading {type} Questions...</div>;

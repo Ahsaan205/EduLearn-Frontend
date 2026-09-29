@@ -30,6 +30,11 @@ export default function ChapterQuiz() {
         console.error(err);
         setLoading(false);
       });
+
+    const token = localStorage.getItem('token');
+    if (token && chapterId) {
+      api.post('/visits', { itemType: 'Chapter', itemId: chapterId }).catch(err => console.error('Failed to record visit:', err));
+    }
   }, [chapterId]);
 
   const handleSelectOption = (option) => {

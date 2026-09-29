@@ -5,12 +5,17 @@ import { Trophy, CheckCircle, Clock } from 'lucide-react';
 
 export default function StudentDashboard({ user }) {
   const [progress, setProgress] = useState([]);
+  const [frequentVisits, setFrequentVisits] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/progress')
-      .then(res => {
-        setProgress(res.data);
+    Promise.all([
+      api.get('/progress'),
+      api.get('/visits').catch(() => ({ data: [] })) // Fallback if visits API fails
+    ])
+      .then(([progressRes, visitsRes]) => {
+        setProgress(progressRes.data);
+        setFrequentVisits(visitsRes.data);
         setLoading(false);
       })
       .catch(err => {
@@ -93,19 +98,40 @@ export default function StudentDashboard({ user }) {
         )}
       </div>
 
-      <div className="glass-panel p-6">
-        <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
-        <div className="flex flex-col gap-3">
-          {progress.length > 0 ? progress.slice().reverse().map(p => (
-            <div key={p._id} className="flex justify-between items-center p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-              <span className="font-medium text-white">{p.chapterId?.title || 'Unknown Chapter'}</span>
-              <span className="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-sm font-semibold">
-                Score: {p.mcqScore}
-              </span>
-            </div>
-          )) : (
-             <div className="text-slate-500 text-sm">No activity recorded.</div>
-          )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="glass-panel p-6">
+          <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
+          <div className="flex flex-col gap-3">
+            {progress.length > 0 ? progress.slice().reverse().map(p => (
+              <div key={p._id} className="flex justify-between items-center p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                <span className="font-medium text-white">{p.chapterId?.title || 'Unknown Chapter'}</span>
+                <span className="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-sm font-semibold">
+                  Score: {p.mcqScore}
+                </span>
+              </div>
+            )) : (
+               <div className="text-slate-500 text-sm">No activity recorded.</div>
+            )}
+          </div>
+        </div>
+
+        <div className="glass-panel p-6">
+          <h2 className="text-xl font-bold mb-4">Frequently Visited</h2>
+          <div className="flex flex-col gap-3">
+            {frequentVisits.length > 0 ? frequentVisits.map((v, i) => (
+              <div key={i} className="flex justify-between items-center p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                <div className="flex flex-col">
+                  <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider">{v.itemType}</span>
+                  <span className="font-medium text-white text-lg">{v.itemId?.title || v.itemId?.name || 'Unknown'}</span>
+                </div>
+                <div className="flex items-center gap-2 bg-blue-500/10 text-blue-300 px-3 py-1.5 rounded-full text-sm font-semibold">
+                   <span>{v.count}</span> <span className="text-xs">visits</span>
+                </div>
+              </div>
+            )) : (
+               <div className="text-slate-500 text-sm">No frequently visited items yet. Explore some subjects or chapters!</div>
+            )}
+          </div>
         </div>
       </div>
     </div>

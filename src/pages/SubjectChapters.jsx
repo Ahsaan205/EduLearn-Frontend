@@ -20,6 +20,13 @@ export default function SubjectChapters() {
       console.error(err);
       setLoading(false);
     });
+
+    const token = localStorage.getItem('token');
+    if (token && subjectId) {
+      api.post('/visits', { itemType: 'Subject', itemId: subjectId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      }).catch(err => console.error('Failed to record visit:', err));
+    }
   }, [subjectId]);
 
   const handleStart = (chId, type) => {
