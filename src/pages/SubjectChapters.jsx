@@ -95,9 +95,9 @@ export default function SubjectChapters() {
                     <Download className="w-4 h-4" /> PDF
                   </button>
                   <button 
-                    className="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold py-2 px-4 transition-all duration-300"
+                    className="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 rounded-xl flex items-center justify-center w-9 h-9 transition-all duration-300"
                   >
-                    Practice <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                   </button>
                 </div>
               </div>
@@ -111,28 +111,25 @@ export default function SubjectChapters() {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
                     <div className="px-5 sm:px-6 pb-6 pt-2 border-t border-slate-700/50 bg-slate-900/30">
-                      <p className="text-sm text-slate-400 mb-4 font-medium">Select a practice mode:</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <p className="text-sm text-slate-400 mb-3 font-medium">Select a practice mode:</p>
+                      <div className="flex flex-wrap gap-3">
                         <button 
                           onClick={(e) => { e.stopPropagation(); handleStart(ch._id, 'MCQ'); }} 
-                          className="bg-[#5C7285] hover:bg-[#4A5D6D] text-white rounded-xl shadow-md shadow-[#5C7285]/20 flex flex-col items-center justify-center gap-1 py-3 px-4 transition-all duration-300 transform hover:-translate-y-1"
+                          className="flex-1 sm:flex-none bg-[#5C7285] hover:bg-[#4A5D6D] text-white rounded-lg shadow-sm flex items-center justify-center py-2 px-6 text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5"
                         >
-                          <span className="font-bold">MCQs</span>
-                          <span className="text-xs opacity-80 font-medium">Multiple Choice</span>
+                          MCQs
                         </button>
                         <button 
                           onClick={(e) => { e.stopPropagation(); handleStart(ch._id, 'Short'); }} 
-                          className="bg-[#8B9A6E] hover:bg-[#76855b] text-white rounded-xl shadow-md shadow-[#8B9A6E]/20 flex flex-col items-center justify-center gap-1 py-3 px-4 transition-all duration-300 transform hover:-translate-y-1"
+                          className="flex-1 sm:flex-none bg-[#8B9A6E] hover:bg-[#76855b] text-white rounded-lg shadow-sm flex items-center justify-center py-2 px-6 text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5"
                         >
-                          <span className="font-bold">Short Qs</span>
-                          <span className="text-xs opacity-80 font-medium">Text Answers</span>
+                          Short Qs
                         </button>
                         <button 
                           onClick={(e) => { e.stopPropagation(); handleStart(ch._id, 'Long'); }} 
-                          className="bg-[#A37C82] hover:bg-[#8F6A70] text-white rounded-xl shadow-md shadow-[#A37C82]/20 flex flex-col items-center justify-center gap-1 py-3 px-4 transition-all duration-300 transform hover:-translate-y-1"
+                          className="flex-1 sm:flex-none bg-[#A37C82] hover:bg-[#8F6A70] text-white rounded-lg shadow-sm flex items-center justify-center py-2 px-6 text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5"
                         >
-                          <span className="font-bold">Long Qs</span>
-                          <span className="text-xs opacity-80 font-medium">Detailed Answers</span>
+                          Long Qs
                         </button>
                       </div>
                     </div>
