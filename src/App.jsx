@@ -13,6 +13,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import ChapterTextQuestions from './pages/ChapterTextQuestions';
 import CustomTestGenerator from './pages/CustomTestGenerator';
 import MyActivity from './pages/MyActivity';
+import ChapterPrintView from './pages/ChapterPrintView';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/chapter/:chapterId/quiz" element={<ChapterQuiz />} />
             <Route path="/chapter/:chapterId/short-questions" element={<ChapterTextQuestions type="Short" />} />
             <Route path="/chapter/:chapterId/long-questions" element={<ChapterTextQuestions type="Long" />} />
+            <Route path="/chapter/:chapterId/print" element={<ChapterPrintView />} />
             <Route path="/portal" element={<Portal />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/my-profile" element={<MyProfile />} />
