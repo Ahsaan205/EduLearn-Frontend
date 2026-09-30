@@ -133,7 +133,7 @@ export default function ChapterQuiz() {
                   <div className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-100 text-sm font-bold mt-0.5">
                     {i + 1}
                   </div>
-                  <div className="text-base font-medium text-slate-100 leading-relaxed overflow-x-auto min-w-0 pb-1">
+                  <div dir="auto" className="text-base font-medium text-slate-100 leading-[2.5] break-words min-w-0 pb-1">
                     <Latex>{q.questionText}</Latex>
                   </div>
                 </div>
@@ -157,7 +157,7 @@ export default function ChapterQuiz() {
                     
                     return (
                       <div key={optIdx} className={`flex items-center justify-between gap-3 ${style}`}>
-                        <div className="overflow-x-auto min-w-0 pb-1"><Latex>{opt}</Latex></div>
+                        <div dir="auto" className="break-words leading-[2.5] min-w-0 pb-1"><Latex>{opt}</Latex></div>
                         {badge}
                       </div>
                     );
@@ -186,7 +186,7 @@ export default function ChapterQuiz() {
           </div>
         </div>
         
-        <h2 className="text-lg font-bold text-white mb-6 leading-relaxed overflow-x-auto pb-2">
+        <h2 dir="auto" className="text-lg font-bold text-white mb-6 leading-[2.5] break-words pb-2">
           <Latex>{currentQ.questionText}</Latex>
         </h2>
         
@@ -213,7 +213,7 @@ export default function ChapterQuiz() {
                   <div className={`flex-shrink-0 w-5 h-5 rounded-full border flex items-center justify-center ${isSelected ? 'border-blue-500' : 'border-slate-500'}`}>
                      {isSelected && <div className="w-2.5 h-2.5 bg-blue-500 rounded-full" />}
                   </div>
-                  <div className="text-sm sm:text-base overflow-x-auto min-w-0 pb-1"><Latex>{opt}</Latex></div>
+                  <div dir="auto" className="text-sm sm:text-base break-words leading-[2.5] min-w-0 pb-1"><Latex>{opt}</Latex></div>
                 </div>
               </button>
             )

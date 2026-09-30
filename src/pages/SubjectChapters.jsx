@@ -92,7 +92,7 @@ export default function SubjectChapters() {
                     className="bg-slate-700/50 hover:bg-slate-600 text-slate-200 border border-slate-600 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold py-2 px-4 transition-all duration-300" 
                     title="Download Chapter PDF"
                   >
-                    <Download className="w-4 h-4" /> PDF
+                    <Download className="w-4 h-4" />
                   </button>
                   <button 
                     className="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 rounded-xl flex items-center justify-center w-9 h-9 transition-all duration-300"
